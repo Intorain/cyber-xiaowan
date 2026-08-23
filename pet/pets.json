@@ -3,7 +3,7 @@
   "states": {
     "idle": {
       "label": "待机",
-      "image": null,
+      "image": "assets/idle.jpg",
       "emoji": "🌱",
       "animation": "breathe",
       "transient": false,
@@ -27,7 +27,7 @@
     },
     "work": {
       "label": "干活中",
-      "image": null,
+      "image": "assets/work.jpg",
       "emoji": "🛠️",
       "animation": "hop",
       "transient": false,
@@ -53,7 +53,7 @@
     },
     "question": {
       "label": "有疑问",
-      "image": null,
+      "image": "assets/question.jpg",
       "emoji": "🧐",
       "animation": "tilt",
       "transient": true,
@@ -67,7 +67,7 @@
     },
     "sleep": {
       "label": "打盹",
-      "image": null,
+      "image": "assets/sleep.jpg",
       "emoji": "😴",
       "animation": "zzz",
       "transient": false,
