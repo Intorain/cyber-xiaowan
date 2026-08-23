@@ -1,7 +1,7 @@
 {
   "name": "cyber-xiaowan",
-  "version": "2.0.0",
-  "description": "一面有温度、有证据边界的结构化思考镜子。",
+  "version": "2.1.0",
+  "description": "一个有温度、有证据边界的结构化思考操作系统。",
   "license": "MIT",
   "type": "module",
   "bin": {
