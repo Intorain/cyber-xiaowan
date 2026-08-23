@@ -12,12 +12,14 @@
     "START.md",
     "SKILL.md",
     "agents",
+    "scripts",
     "references",
     "README.md"
   ],
   "scripts": {
     "start": "node ./bin/install.js",
-    "check": "node --check ./bin/install.js"
+    "check": "node --check ./bin/install.js && node --check ./bin/cyber-xiaowan.js && node ./scripts/privacy-check.js",
+    "privacy:check": "node ./scripts/privacy-check.js"
   },
   "engines": {
     "node": ">=18"

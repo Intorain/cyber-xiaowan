@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cp, writeFile, mkdir, access, readdir, readFile } from 'node:fs/promises';
+import { cp, writeFile, mkdir, access, readFile, rename, rm, lstat } from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -58,23 +58,6 @@ async function statDir(dir) {
       isDirectory: false,
       writable: false,
     };
-  }
-}
-
-async function canWrite(dir) {
-  try {
-    await access(dir, fsConstants.W_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function listEntries(dir) {
-  try {
-    return await readdir(dir);
-  } catch {
-    return [];
   }
 }
 
@@ -138,8 +121,8 @@ async function installSkill(targetDir) {
   const target = path.join(targetDir, 'cyber-xiaowan');
   let targetExists = false;
   try {
-    const stat = await import('node:fs/promises').then((m) => m.stat(target));
-    targetExists = stat.isDirectory() || stat.isFile();
+    await lstat(target);
+    targetExists = true;
   } catch {
     targetExists = false;
   }
@@ -153,12 +136,37 @@ async function installSkill(targetDir) {
   }
 
   await mkdir(targetDir, { recursive: true });
-  await cp(path.join(repoRoot, 'SKILL.md'), path.join(target, 'SKILL.md'));
-  await cp(path.join(repoRoot, 'START.md'), path.join(target, 'START.md'));
-  await cp(path.join(repoRoot, 'agents'), path.join(target, 'agents'), { recursive: true });
-  await cp(path.join(repoRoot, 'references'), path.join(target, 'references'), { recursive: true });
-  await cp(path.join(repoRoot, 'README.md'), path.join(target, 'README.md'));
-  await writeFile(path.join(target, 'INSTALLED_BY_CYBER_XIAOWAN.txt'), `${new Date().toISOString()}\n`);
+  const staging = path.join(targetDir, `.cyber-xiaowan-install-${process.pid}-${Date.now()}`);
+  await mkdir(staging);
+
+  try {
+    await cp(path.join(repoRoot, 'SKILL.md'), path.join(staging, 'SKILL.md'));
+    await cp(path.join(repoRoot, 'START.md'), path.join(staging, 'START.md'));
+    await cp(path.join(repoRoot, 'agents'), path.join(staging, 'agents'), { recursive: true });
+    await cp(path.join(repoRoot, 'references'), path.join(staging, 'references'), { recursive: true });
+    await cp(path.join(repoRoot, 'README.md'), path.join(staging, 'README.md'));
+    await writeFile(path.join(staging, 'INSTALLED_BY_CYBER_XIAOWAN.txt'), `${new Date().toISOString()}\n`);
+
+    let backup = null;
+    if (targetExists) {
+      const stamp = new Date().toISOString().replaceAll(':', '-');
+      backup = path.join(targetDir, `cyber-xiaowan.backup-${stamp}`);
+      await rename(target, backup);
+    }
+
+    try {
+      await rename(staging, target);
+    } catch (error) {
+      if (backup) await rename(backup, target).catch(() => {});
+      throw error;
+    }
+
+    if (backup) output.write(`旧版本已保留在：${backup}\n`);
+  } catch (error) {
+    await rm(staging, { recursive: true, force: true }).catch(() => {});
+    throw error;
+  }
+
   return true;
 }
 
