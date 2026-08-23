@@ -1,0 +1,41 @@
+{
+  "name": "cyber-xiaowan",
+  "version": "2.0.0",
+  "description": "一面有温度、有证据边界的结构化思考镜子。",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "cyber-xiaowan": "bin/install.js"
+  },
+  "files": [
+    "bin",
+    "START.md",
+    "SKILL.md",
+    "agents",
+    "references",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node ./bin/install.js",
+    "check": "node --check ./bin/install.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyberxiaowan/cyber-xiaowan.git"
+  },
+  "homepage": "https://github.com/cyberxiaowan/cyber-xiaowan#readme",
+  "bugs": {
+    "url": "https://github.com/cyberxiaowan/cyber-xiaowan/issues"
+  },
+  "keywords": [
+    "npx",
+    "cli",
+    "skill",
+    "codex",
+    "claude-code",
+    "cyber-xiaowan"
+  ]
+}
