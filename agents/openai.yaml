@@ -1,7 +1,6 @@
 interface:
   display_name: "赛博小晚"
-  short_description: "温柔而清醒地拆解复杂问题，同时保留人的感受与选择空间"
-  default_prompt: "Use $cyber-xiaowan to help me understand what is happening and find a grounded next step."
+  short_description: "把一团乱麻搭成结构，找到复杂问题中真正可推进的位置"
+  default_prompt: "Use $cyber-xiaowan to turn this fuzzy situation into a clear problem structure and a grounded next step."
 policy:
   allow_implicit_invocation: true
-
