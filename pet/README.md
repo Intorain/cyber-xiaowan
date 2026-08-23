@@ -24,14 +24,15 @@ npm run pet
 
 | 状态 | 动作/表情 | 触发命令 | 说明 |
 |---|---|---|---|
-| `idle` | 😊 真人特写·呼吸 | `node pet/cli.mjs idle` | 默认状态，脸部特写 |
-| `think` | 🤔 emoji·摇摆 | `node pet/cli.mjs think` | 思考中，暂用 emoji 兜底 |
-| `work` | 💪 真人全景·镜像小跳 | `node pet/cli.mjs work` | 干活中，镜像画面 |
+| `idle` | 😊 挥手待机 | `node pet/cli.mjs idle` | 默认状态 |
+| `think` | 🤔 托腮思考 | `node pet/cli.mjs think` | 思考中 |
+| `work` | 🛠️ 低头打字 | `node pet/cli.mjs work` | 干活中 |
 | `clap` | 👏 真人鼓掌（实拍原图） | `node pet/cli.mjs clap` | 庆祝，几秒后自动回落 |
-| `question` | 🧐 真人特写·歪头 | `node pet/cli.mjs question` | 有疑问，自动回落 |
-| `sleep` | 😴 真人全景·调暗冒泡 | `node pet/cli.mjs sleep` | 长时间无活动 |
+| `question` | 🧐 歪头疑惑 | `node pet/cli.mjs question` | 有疑问，自动回落 |
+| `heart` | ❤️ 双手比心 | `node pet/cli.mjs heart` | 感谢/喜欢，自动回落 |
+| `sleep` | 😴 双手当枕打盹 | `node pet/cli.mjs sleep` | 长时间无活动 |
 
-六个状态中五个使用真人形象（同一张实拍的不同构图派生：特写、镜像、旋转、调色），图片态右下角会带对应状态的 emoji 徽标。
+`clap.jpg` 是实拍原图；其余状态用同一人设的生图动作贴图（待机、思考、干活、疑问、比心、打盹）。图片态右下角会带对应状态的 emoji 徽标。
 
 交互：拖动卡片移动位置（会记住）；单击切换状态；双击直接鼓掌。窗口以 Chrome/Edge 应用模式打开，没有这些浏览器时回退默认浏览器。
 
@@ -78,13 +79,13 @@ curl -N http://127.0.0.1:PORT/api/events      # SSE 实时订阅
 
 ## 添加更多真人表情包素材
 
-当前内置素材全部来自一张「鼓掌」实拍原图：`clap.jpg` 是原图，`idle.jpg`（特写）、`work.jpg`（镜像）、`question.jpg`（旋转歪头）、`sleep.jpg`（去饱和调暗）是它的派生构图。补充你自己的素材：
+`clap.jpg` 是实拍原图；`idle.jpg` / `think.jpg` / `work.jpg` / `question.jpg` / `heart.jpg` / `sleep.jpg` 是按这张原图人设生成的不同动作表情包。补充你自己的素材：
 
 1. 把图片放进 `pet/assets/`（建议 700px 宽以内，jpg/png 均可）。
 2. 在 `pet/pets.json` 里给对应状态的 `"image"` 字段填上相对路径（如 `"assets/think.jpg"`）；`"image"` 为空时该状态使用 emoji 形象兜底。
 3. 保存后刷新桌宠窗口即可生效，无需重启服务。
 
-不同动作的实拍照片（思考、打字、睡觉、比心等）替换掉派生图后效果最好——派生图只是让框架开箱即用。
+有更多实拍动作照片时，直接替换对应文件即可。
 
 素材版权与肖像：请只使用你有权使用的图片。内置素材来自赛博小晚项目作者本人的照片，仅作示例用途；若你合并此 PR 后希望替换或移除，改 `pet/assets/` 或删除对应引用即可。
 
@@ -98,10 +99,12 @@ pet/
 ├── public/index.html          # 桌宠界面（拖拽 / 点击 / 动画）
 ├── assets/                    # 真人表情包素材
 │   ├── clap.jpg               # 「鼓掌」实拍原图（庆祝态）
-│   ├── idle.jpg               # 头部特写（待机）
-│   ├── work.jpg               # 镜像全景（干活）
-│   ├── question.jpg           # 旋转歪头特写（疑问）
-│   └── sleep.jpg              # 去饱和调暗（打盹）
+│   ├── idle.jpg               # 挥手待机
+│   ├── think.jpg              # 托腮思考
+│   ├── work.jpg               # 低头打字
+│   ├── question.jpg           # 歪头疑惑
+│   ├── heart.jpg              # 双手比心
+│   └── sleep.jpg              # 打盹
 └── integrations/
     ├── codex-notify.mjs       # Codex CLI notify 钩子桥
     └── dsh-watch.mjs          # DSH 会话活动观察器

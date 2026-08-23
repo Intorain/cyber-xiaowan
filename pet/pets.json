@@ -15,7 +15,7 @@
     },
     "think": {
       "label": "思考中",
-      "image": null,
+      "image": "assets/think.jpg",
       "emoji": "🤔",
       "animation": "sway",
       "transient": false,
@@ -63,6 +63,20 @@
         "等一下，这里我有个疑问。",
         "这个判断的依据是什么？",
         "要不我们先核对一下事实？"
+      ]
+    },
+    "heart": {
+      "label": "比心",
+      "image": "assets/heart.jpg",
+      "emoji": "❤️",
+      "animation": "cheer",
+      "transient": true,
+      "durationMs": 5000,
+      "returnTo": "idle",
+      "lines": [
+        "给你比个心～",
+        "这步我喜欢。",
+        "收到，爱了。"
       ]
     },
     "sleep": {
