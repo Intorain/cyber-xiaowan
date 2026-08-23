@@ -47,7 +47,18 @@
 npx github:cyberxiaowan/cyber-xiaowan
 ```
 
-安装器会检测本机可用的 Claude Code、Codex 和 Agents skill 目录；存在多个目标时会请你选择，已有安装默认不覆盖。
+安装器会检测本机可用的 Claude Code、Codex、Agents 和 DSH skill 目录；存在多个目标时会请你选择，已有安装默认不覆盖。
+
+## 桌宠模式（实验性）
+
+让小晚以真人表情包桌宠的形式住在桌面上：待机、思考、干活、鼓掌、疑问、打盹六种状态各自有动作和台词，Codex 与 DSH 的会话事件会实时点亮她。零依赖，全部本地运行。
+
+```bash
+npm run pet              # 启动桌宠
+npm run pet -- clap      # 让小晚鼓一次掌
+```
+
+接入 Codex 的 `notify` 钩子和 DSH 会话观察器等细节见 [`pet/README.md`](./pet/README.md)。
 
 ## 怎么用
 
@@ -107,6 +118,7 @@ cyber-xiaowan/
 ├── agents/openai.yaml        # Codex UI 元数据
 ├── references/               # 按场景加载的判断规则
 ├── bin/install.js            # 一键安装器
+├── pet/                      # 真人表情包桌宠（Codex / DSH 适配）
 └── package.json
 ```
 

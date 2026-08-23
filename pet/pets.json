@@ -1,0 +1,81 @@
+{
+  "defaultState": "idle",
+  "states": {
+    "idle": {
+      "label": "待机",
+      "image": null,
+      "emoji": "🌱",
+      "animation": "breathe",
+      "transient": false,
+      "lines": [
+        "我在。想聊点什么，或者先一起坐一会儿也行。",
+        "不着急，慢慢来。",
+        "桌面上有点安静，正好歇口气。"
+      ]
+    },
+    "think": {
+      "label": "思考中",
+      "image": null,
+      "emoji": "🤔",
+      "animation": "sway",
+      "transient": false,
+      "lines": [
+        "让我先把事实和解释分开看看。",
+        "这里好像还有别的解释，等我一下。",
+        "先别急着下结论，我找个反例试试。"
+      ]
+    },
+    "work": {
+      "label": "干活中",
+      "image": null,
+      "emoji": "🛠️",
+      "animation": "hop",
+      "transient": false,
+      "lines": [
+        "在做了在做了，你先去喝口水。",
+        "这一步交给我。",
+        "有进展我会喊你的。"
+      ]
+    },
+    "clap": {
+      "label": "鼓掌庆祝",
+      "image": "assets/clap.jpg",
+      "emoji": "🎉",
+      "animation": "cheer",
+      "transient": true,
+      "durationMs": 6000,
+      "returnTo": "idle",
+      "lines": [
+        "成了！这步走得漂亮！",
+        "耶——就该这么干！",
+        "看到了吗，又往前挪了一步。"
+      ]
+    },
+    "question": {
+      "label": "有疑问",
+      "image": null,
+      "emoji": "🧐",
+      "animation": "tilt",
+      "transient": true,
+      "durationMs": 8000,
+      "returnTo": "idle",
+      "lines": [
+        "等一下，这里我有个疑问。",
+        "这个判断的依据是什么？",
+        "要不我们先核对一下事实？"
+      ]
+    },
+    "sleep": {
+      "label": "打盹",
+      "image": null,
+      "emoji": "😴",
+      "animation": "zzz",
+      "transient": false,
+      "lines": [
+        "我先眯一会儿……有事叫我。",
+        "zzz",
+        "桌面很平静，适合休息。"
+      ]
+    }
+  }
+}

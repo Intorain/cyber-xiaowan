@@ -23,6 +23,7 @@ function defaultRoots() {
     { kind: 'Claude Code', dir: path.join(home, '.claude', 'skills') },
     { kind: 'Codex', dir: path.join(home, '.codex', 'skills') },
     { kind: 'Agents', dir: path.join(home, '.agents', 'skills') },
+    { kind: 'DSH', dir: path.join(home, '.dsh', 'skills') },
   ];
 }
 
@@ -36,6 +37,7 @@ function rootsFromEnv() {
     if (lower.includes('.claude')) kind = 'Claude Code';
     else if (lower.includes('.codex')) kind = 'Codex';
     else if (lower.includes('.agents')) kind = 'Agents';
+    else if (lower.includes('.dsh')) kind = 'DSH';
     return { kind, dir };
   });
 }
@@ -95,7 +97,7 @@ async function chooseTarget(roots) {
     printRootTable(inspected);
     output.write('支持的目标：\n');
     for (const item of roots) output.write(`- ${item.kind}: ${item.dir}\n`);
-    const choice = await ask('请输入要创建并安装到的目标编号（1=Claude Code, 2=Codex, 3=Agents，回车默认 1）：');
+    const choice = await ask(`请输入要创建并安装到的目标编号（${roots.map((root, index) => `${index + 1}=${root.kind}`).join(', ')}，回车默认 1）：`);
     const index = Number.parseInt(choice, 10);
     const selected = roots[(Number.isFinite(index) && index >= 1 && index <= roots.length ? index : 1) - 1];
     await mkdir(selected.dir, { recursive: true });
