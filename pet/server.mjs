@@ -72,8 +72,28 @@ async function readBody(req, limit = 8 * 1024) {
 
 function serveFile(res, absolutePath) {
   const ext = path.extname(absolutePath).toLowerCase();
-  res.writeHead(200, { 'content-type': mime[ext] || 'application/octet-stream' });
-  createReadStream(absolutePath).pipe(res);
+  const stream = createReadStream(absolutePath);
+  stream.once('open', () => {
+    res.writeHead(200, { 'content-type': mime[ext] || 'application/octet-stream' });
+    stream.pipe(res);
+  });
+  stream.once('error', (error) => {
+    if (res.headersSent) {
+      res.destroy(error);
+      return;
+    }
+    if (error && (error.code === 'ENOENT' || error.code === 'EISDIR')) {
+      sendJson(res, 404, { error: 'not found' });
+      return;
+    }
+    sendJson(res, 500, { error: 'failed to read file' });
+  });
+}
+
+function hasTrustedOrigin(req) {
+  const origin = req.headers.origin;
+  if (!origin) return true;
+  return origin === `http://${req.headers.host}`;
 }
 
 const server = createServer(async (req, res) => {
@@ -97,6 +117,9 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === 'POST' && url.pathname === '/api/state') {
+      if (!hasTrustedOrigin(req)) {
+        return sendJson(res, 403, { error: 'forbidden origin' });
+      }
       const body = JSON.parse((await readBody(req)) || '{}');
       const ok = setState(body.state, body.note);
       if (!ok) {
