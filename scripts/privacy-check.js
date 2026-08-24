@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '..');
-const packageRoots = ['README.md', 'SKILL.md', 'START.md', 'agents', 'bin', 'package.json', 'references', 'scripts'];
+const packageRoots = ['README.md', 'SKILL.md', 'START.md', 'agents', 'bin', 'package.json', 'pet', 'references', 'scripts'];
 
 const forbiddenContent = [
   { label: '本机绝对路径', pattern: /(?:\/Users\/|\/home\/[^/\s]+\/|[A-Za-z]:\\Users\\)/ },

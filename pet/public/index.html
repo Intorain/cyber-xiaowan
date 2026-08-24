@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>赛博小晚 · 桌宠</title>
+<style>
+  :root {
+    --card-bg: rgba(255, 252, 247, 0.92);
+    --ink: #4a3f35;
+    --ink-soft: #9a8b7a;
+    --accent: #e8927c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
+  body { font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif; color: var(--ink); }
+
+  #pet-card {
+    position: absolute;
+    width: 300px;
+    padding: 14px 14px 10px;
+    border-radius: 22px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 32px rgba(74, 63, 53, 0.22), inset 0 0 0 1.5px rgba(255,255,255,0.7);
+    cursor: grab;
+    touch-action: none;
+  }
+  #pet-card.dragging { cursor: grabbing; box-shadow: 0 18px 44px rgba(74,63,53,0.3), inset 0 0 0 1.5px rgba(255,255,255,0.7); }
+
+  #bubble {
+    position: relative;
+    margin: 0 4px 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid #f0e4d7;
+    font-size: 13.5px;
+    line-height: 1.55;
+    min-height: 20px;
+  }
+  #bubble::after {
+    content: "";
+    position: absolute;
+    left: 28px; bottom: -7px;
+    width: 12px; height: 12px;
+    background: #fff;
+    border-right: 1.5px solid #f0e4d7;
+    border-bottom: 1.5px solid #f0e4d7;
+    transform: rotate(45deg);
+  }
+
+  #stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 10 / 11;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(160deg, #fdf3ea, #f6e8dc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #stage img { width: 100%; height: 100%; object-fit: cover; }
+  #emoji-face { font-size: 96px; line-height: 1; filter: drop-shadow(0 6px 10px rgba(74,63,53,0.18)); }
+
+  #state-badge {
+    position: absolute;
+    left: 10px; top: 10px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: rgba(74, 63, 53, 0.55);
+  }
+  #state-emoji {
+    position: absolute;
+    right: 8px; bottom: 8px;
+    font-size: 17px;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 5px rgba(74, 63, 53, 0.18);
+  }
+  #zzz-mark {
+    position: absolute;
+    right: 16px; top: 12px;
+    font-size: 22px;
+    opacity: 0;
+  }
+
+  #hint {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+
+  /* —— 状态动画 —— */
+  .anim-breathe #stage img, .anim-breathe #emoji-face { animation: breathe 3.6s ease-in-out infinite; }
+  .anim-sway    #stage img, .anim-sway    #emoji-face { animation: sway 2.6s ease-in-out infinite; transform-origin: 50% 88%; }
+  .anim-hop     #stage img, .anim-hop     #emoji-face { animation: hop 1.1s cubic-bezier(.36,.07,.19,.97) infinite; }
+  .anim-cheer   #stage img, .anim-cheer   #emoji-face { animation: cheer 0.62s cubic-bezier(.36,.07,.19,.97) infinite; }
+  .anim-tilt    #stage img, .anim-tilt    #emoji-face { animation: tilt 2.2s ease-in-out infinite; transform-origin: 50% 90%; }
+  .anim-zzz     #stage img, .anim-zzz     #emoji-face { animation: breathe 5s ease-in-out infinite; }
+  .anim-zzz #zzz-mark { animation: zzz 2.6s ease-in-out infinite; }
+
+  @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+  @keyframes sway    { 0%,100% { transform: rotate(-2.4deg); } 50% { transform: rotate(2.4deg); } }
+  @keyframes hop     { 0%,100% { transform: translateY(0); } 30% { transform: translateY(-9px) scale(1.02); } 55% { transform: translateY(0); } }
+  @keyframes cheer   { 0%,100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-13px) rotate(-2.5deg); } 50% { transform: translateY(0); } 75% { transform: translateY(-13px) rotate(2.5deg); } }
+  @keyframes tilt    { 0%,100% { transform: rotate(0); } 40% { transform: rotate(5deg); } 70% { transform: rotate(-3deg); } }
+  @keyframes zzz     { 0% { opacity: 0; transform: translate(0, 4px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(10px, -14px); } }
+</style>
+</head>
+<body>
+  <div id="pet-card">
+    <div id="bubble">加载中……</div>
+    <div id="stage">
+      <span id="state-badge"></span>
+      <span id="state-emoji" hidden></span>
+      <span id="zzz-mark">💤</span>
+      <span id="emoji-face" hidden></span>
+      <img id="pet-img" alt="赛博小晚桌宠" hidden />
+    </div>
+    <div id="hint">拖动移动 · 点击切换 · 双击鼓掌 🎉</div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const card = $('pet-card'), bubble = $('bubble'), badge = $('state-badge');
+  const stage = $('stage'), img = $('pet-img'), face = $('emoji-face'), chip = $('state-emoji');
+
+  let meta = null;
+  let current = null;
+  let revertTimer = null;
+  let lineTimer = null;
+
+  function pickLine(stateName) {
+    const conf = meta.states[stateName];
+    const lines = (conf && conf.lines && conf.lines.length) ? conf.lines : ['……'];
+    return lines[Math.floor(Math.random() * lines.length)];
+  }
+
+  function render(name, note) {
+    const conf = meta.states[name];
+    if (!conf) return;
+    current = name;
+
+    badge.textContent = conf.label || name;
+    bubble.textContent = note || pickLine(name);
+
+    if (conf.image) {
+      img.src = '/' + conf.image;
+      img.hidden = false;
+      face.hidden = true;
+      chip.textContent = conf.emoji || '';
+      chip.hidden = !chip.textContent;
+    } else {
+      face.textContent = conf.emoji || '🌱';
+      face.hidden = false;
+      img.hidden = true;
+      chip.hidden = true;
+    }
+
+    stage.className = '';
+    void stage.offsetWidth;
+    stage.className = 'anim-' + (conf.animation || 'breathe');
+
+    clearTimeout(revertTimer);
+    if (conf.transient && conf.returnTo) {
+      revertTimer = setTimeout(() => applyState(conf.returnTo), conf.durationMs || 6000);
+    }
+
+    clearInterval(lineTimer);
+    lineTimer = setInterval(() => {
+      if (!document.hidden) bubble.textContent = pickLine(current);
+    }, 9000);
+  }
+
+  async function applyState(name, note) {
+    try {
+      await fetch('/api/state', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ state: name, note }),
+      });
+    } catch { render(name, note); }
+  }
+
+  // —— 拖动 ——
+  let dragging = null;
+  card.addEventListener('pointerdown', (event) => {
+    if (event.target === bubble) return;
+    dragging = {
+      dx: event.clientX - card.offsetLeft,
+      dy: event.clientY - card.offsetTop,
+      moved: false,
+    };
+    card.classList.add('dragging');
+    card.setPointerCapture(event.pointerId);
+  });
+  card.addEventListener('pointermove', (event) => {
+    if (!dragging) return;
+    const x = Math.max(4, Math.min(window.innerWidth - card.offsetWidth - 4, event.clientX - dragging.dx));
+    const y = Math.max(4, Math.min(window.innerHeight - card.offsetHeight - 4, event.clientY - dragging.dy));
+    if (Math.abs(x - card.offsetLeft) + Math.abs(y - card.offsetTop) > 3) dragging.moved = true;
+    card.style.left = x + 'px';
+    card.style.top = y + 'px';
+  });
+  card.addEventListener('pointerup', () => {
+    card.classList.remove('dragging');
+    if (dragging && dragging.moved) {
+      localStorage.setItem('cyber-xiaowan-pet-pos', JSON.stringify({ x: card.offsetLeft, y: card.offsetTop }));
+    }
+    dragging = null;
+  });
+
+  // —— 点击切换 / 双击鼓掌 ——
+  let clickCount = 0, clickTimer = null;
+  card.addEventListener('click', () => {
+    clickCount++;
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => {
+      if (clickCount >= 2) {
+        applyState('clap');
+      } else if (meta) {
+        const names = Object.keys(meta.states);
+        const next = names[(names.indexOf(current) + 1) % names.length];
+        applyState(next);
+      }
+      clickCount = 0;
+    }, 260);
+  });
+
+  function restorePosition() {
+    try {
+      const pos = JSON.parse(localStorage.getItem('cyber-xiaowan-pet-pos') || 'null');
+      if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+        card.style.left = Math.min(pos.x, window.innerWidth - 320) + 'px';
+        card.style.top = Math.min(pos.y, Math.max(4, window.innerHeight - 200)) + 'px';
+        return;
+      }
+    } catch {}
+    card.style.left = (window.innerWidth - 330) + 'px';
+    card.style.top = (window.innerHeight - 480) + 'px';
+  }
+
+  async function boot() {
+    meta = await (await fetch('/api/meta')).json();
+    restorePosition();
+    const stateRes = await (await fetch('/api/state')).json();
+    render(stateRes.name, stateRes.note);
+
+    const events = new EventSource('/api/events');
+    events.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+        if (data.type === 'state') render(data.name, data.note);
+      } catch {}
+    };
+    events.onerror = () => setTimeout(() => events.readyState > 1 && location.reload(), 4000);
+  }
+
+  boot().catch((error) => { bubble.textContent = '启动失败：' + error.message; });
+})();
+</script>
+</body>
+</html>
