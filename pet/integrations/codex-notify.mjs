@@ -29,7 +29,7 @@ async function main() {
   if (!state) return;
 
   try {
-    const info = JSON.parse(await readFile(runtimeFile, 'utf8'));
+    const info = JSON.parse(await readFile(runtimeFile(), 'utf8'));
     if (!info.port) return;
     await fetch(`http://127.0.0.1:${info.port}/api/state`, {
       method: 'POST',
