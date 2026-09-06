@@ -152,7 +152,9 @@ async function installSkill(targetDir) {
     let backup = null;
     if (targetExists) {
       const stamp = new Date().toISOString().replaceAll(':', '-');
-      backup = path.join(targetDir, `cyber-xiaowan.backup-${stamp}`);
+      const backupRoot = path.join(path.dirname(targetDir), 'skill-backups');
+      await mkdir(backupRoot, { recursive: true });
+      backup = path.join(backupRoot, `cyber-xiaowan.backup-${stamp}-${process.pid}`);
       await rename(target, backup);
     }
 
